@@ -37,6 +37,12 @@ setup(
     package_dir={'': 'lib'},
     include_package_data=True,
     install_requires=read_reqs('requirements.txt'),
+    entry_points={
+        'console_scripts': [
+            'py2json=astunparse:unparse2jrun',
+            'json2py=astunparse:loadastjrun'
+        ]
+    },
     license="BSD",
     zip_safe=False,
     keywords='astunparse',
@@ -52,6 +58,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Code Generators',
     ],
     test_suite='tests',
