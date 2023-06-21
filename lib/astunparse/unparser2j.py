@@ -75,8 +75,7 @@ class Unparser2J:
             self.write(f'{tree:d}')
         elif isinstance(tree, float):
             if math.isinf(tree):
-                self.write(f'{"{"}"_class": "float",')
-                self.fill(f' "value": "{tree}"{"}"}')
+                self.fill('1e309')
             elif math.isnan(tree):
                 self.write(f'{"{"}"_class": "float",')
                 self.fill(f' "value": {self.nan}{"}"}')
