@@ -12,7 +12,7 @@ def escapejson(str):
     return str.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").replace("\"", "\\\"")
 
 class Unparser2J:
-    indentstr = ' '
+    indentstr = '  '
     indent = 0
     nan = '"NaN"'
     inf = '"Inf"'
