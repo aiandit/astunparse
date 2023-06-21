@@ -72,12 +72,25 @@ class ASTBuilderAttr:
         return result
 
     def dispatch(self, tree):
-        if type(tree) == type({}):
-            res = ASTNode()
-            for key in vars(tree):
-                setattr(res, key, self.dispatch(getattr(tree, key)))
-        elif type(tree) == type([]):
+        if type(tree) == type([]):
             res = list(map(self.dispatch, tree))
+        elif isinstance(tree, str) or  isinstance(tree, tuple()) or isinstance(tree, int) \
+             or isinstance(tree, float) or isinstance(tree, bool) or isinstance(tree, complex) or isinstance(tree, bytes) \
+             or tree is None or tree is Ellipsis:
+            res = tree
+        elif isinstance(tree, object):
+            res = ASTNode()
+            setattr(res, "_class", tree.__class__.__name__)
+            keys = []
+            try:
+                keys = vars(tree).keys()
+            except:
+                try:
+                    keys = tree.__slots__.keys()
+                except:
+                    pass
+            for key in keys:
+                setattr(res, key, self.dispatch(getattr(tree, key)))
         else:
             res = tree
         return res
