@@ -62,7 +62,9 @@ class Unparser:
             for t in tree:
                 self.dispatch(t)
             return
-        meth = getattr(self, "_"+tree.__class__.__name__)
+        cname = tree.__class__.__name__
+        if cname == "ASTNode": cname = tree._class
+        meth = getattr(self, "_"+cname)
         meth(tree)
 
 
@@ -127,10 +129,10 @@ class Unparser:
 
     def _AnnAssign(self, t):
         self.fill()
-        if not t.simple and isinstance(t.target, ast.Name):
+        if not t.simple:
             self.write('(')
         self.dispatch(t.target)
-        if not t.simple and isinstance(t.target, ast.Name):
+        if not t.simple:
             self.write(')')
         self.write(": ")
         self.dispatch(t.annotation)
@@ -393,7 +395,7 @@ class Unparser:
         self.leave()
         # collapse nested ifs into equivalent elifs.
         while (t.orelse and len(t.orelse) == 1 and
-               isinstance(t.orelse[0], ast.If)):
+               hasattr(t.orelse[0], 'test')):
             t = t.orelse[0]
             self.fill("elif ")
             self.dispatch(t.test)
@@ -487,7 +489,9 @@ class Unparser:
 
     def _fstring_JoinedStr(self, t, write):
         for value in t.values:
-            meth = getattr(self, "_fstring_" + type(value).__name__)
+            cname = type(value).__name__
+            if cname == "ASTNode": cname = value._class
+            meth = getattr(self, "_fstring_" + cname)
             meth(value, write)
 
     def _fstring_Str(self, t, write):
@@ -513,7 +517,9 @@ class Unparser:
             write("!{conversion}".format(conversion=conversion))
         if t.format_spec:
             write(":")
-            meth = getattr(self, "_fstring_" + type(t.format_spec).__name__)
+            cname = type(t.format_spec).__name__
+            if cname == "ASTNode": cname = t.format_spec._class
+            meth = getattr(self, "_fstring_" + cname)
             meth(t.format_spec, write)
         write("}")
 
@@ -661,7 +667,9 @@ class Unparser:
     unop = {"Invert":"~", "Not": "not", "UAdd":"+", "USub":"-"}
     def _UnaryOp(self, t):
         self.write("(")
-        self.write(self.unop[t.op.__class__.__name__])
+        cname = t.op.__class__.__name__
+        if cname == "ASTNode": cname = t.op._class
+        self.write(self.unop[cname])
         self.write(" ")
         if six.PY2 and isinstance(t.op, ast.USub) and isinstance(t.operand, ast.Num):
             # If we're applying unary minus to a number, parenthesize the number.
@@ -682,7 +690,9 @@ class Unparser:
     def _BinOp(self, t):
         self.write("(")
         self.dispatch(t.left)
-        self.write(" " + self.binop[t.op.__class__.__name__] + " ")
+        cname = t.op.__class__.__name__
+        if cname == "ASTNode": cname = t.op._class
+        self.write(" " + self.binop[cname] + " ")
         self.dispatch(t.right)
         self.write(")")
 
@@ -692,14 +702,18 @@ class Unparser:
         self.write("(")
         self.dispatch(t.left)
         for o, e in zip(t.ops, t.comparators):
-            self.write(" " + self.cmpops[o.__class__.__name__] + " ")
+            cname = o.__class__.__name__
+            if cname == "ASTNode": cname = o._class
+            self.write(" " + self.cmpops[cname] + " ")
             self.dispatch(e)
         self.write(")")
 
-    boolops = {ast.And: 'and', ast.Or: 'or'}
+    boolops = {'ast.And': 'and', 'ast.Or': 'or', 'And': 'and', 'Or': 'or'}
     def _BoolOp(self, t):
         self.write("(")
-        s = " %s " % self.boolops[t.op.__class__]
+        cname = t.op.__class__.__name__
+        if cname == "ASTNode": cname = t.op._class
+        s = " %s " % self.boolops[cname]
         interleave(lambda: self.write(s), self.dispatch, t.values)
         self.write(")")
 
