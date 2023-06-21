@@ -667,9 +667,7 @@ class Unparser:
     unop = {"Invert":"~", "Not": "not", "UAdd":"+", "USub":"-"}
     def _UnaryOp(self, t):
         self.write("(")
-        cname = t.op.__class__.__name__
-        if cname == "ASTNode": cname = t.op._class
-        self.write(self.unop[cname])
+        self.write(self.getop(t.op))
         self.write(" ")
         if six.PY2 and isinstance(t.op, ast.USub) and isinstance(t.operand, ast.Num):
             # If we're applying unary minus to a number, parenthesize the number.
@@ -691,8 +689,13 @@ class Unparser:
         self.write("(")
         self.dispatch(t.left)
         cname = t.op.__class__.__name__
-        if cname == "ASTNode": cname = t.op._class
-        self.write(" " + self.binop[cname] + " ")
+        if cname == "str":
+            op = t.op
+        else:
+            if cname == "ASTNode":
+                cname = t.op._class
+            op = self.binop[cname]
+        self.write(" " + op + " ")
         self.dispatch(t.right)
         self.write(")")
 
@@ -702,20 +705,29 @@ class Unparser:
         self.write("(")
         self.dispatch(t.left)
         for o, e in zip(t.ops, t.comparators):
-            cname = o.__class__.__name__
-            if cname == "ASTNode": cname = o._class
-            self.write(" " + self.cmpops[cname] + " ")
+            self.write(" " + self.getop(o) + " ")
             self.dispatch(e)
         self.write(")")
 
     boolops = {'ast.And': 'and', 'ast.Or': 'or', 'And': 'and', 'Or': 'or'}
     def _BoolOp(self, t):
         self.write("(")
-        cname = t.op.__class__.__name__
-        if cname == "ASTNode": cname = t.op._class
-        s = " %s " % self.boolops[cname]
+        s = " %s " % self.getop(t.op)
         interleave(lambda: self.write(s), self.dispatch, t.values)
         self.write(")")
+
+    allops = binop | unop | cmpops | boolops
+    @classmethod
+    def getop(self, op):
+        opcode = ''
+        cname = op.__class__.__name__
+        if cname == "str":
+            opcode = op
+        else:
+            if cname == "ASTNode":
+                cname = op._class
+            opcode = self.allops[cname]
+        return opcode
 
     def _Attribute(self,t):
         self.dispatch(t.value)
@@ -907,6 +919,7 @@ def testdir(a):
                     print('  Failed to compile, exception is %s' % repr(e))
             elif os.path.isdir(fullname):
                 testdir(fullname)
+
 
 def main(args):
     if args[0] == '--testdir':

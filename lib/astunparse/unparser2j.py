@@ -135,17 +135,38 @@ class Unparser2J:
                 self.leave()
             self.write('}')
 
-    def __BinOp(self, t):
+    def _BinOp(self, t):
         self.write(f',')
         self.enter()
         self.fill(f'"left": ')
         self.dispatch(t.left)
-        if isinstance(t.op, str):
-            op = t.op
-        else:
-            cname = t.op.__class__.__name__
-            op = Unparser.binop[cname]
-        self.fill(f', "op": "{op}",')
+        self.fill(f', "op": "{Unparser.getop(t.op)}",')
         self.fill(f'"right": ')
         self.dispatch(t.right)
+        self.leave()
+
+    def _UnaryOp(self, t):
+        self.write(f',')
+        self.enter()
+        self.fill(f'"op": "{Unparser.getop(t.op)}", "operand": ')
+        self.dispatch(t.operand)
+        self.leave()
+
+    def _BoolOp(self, t):
+        self.write(f',')
+        self.enter()
+        self.fill(f'"op": "{Unparser.getop(t.op)}", "values": ')
+        self.dispatch(t.values)
+        self.leave()
+
+    def _Compare(self, t):
+        self.write(f',')
+        self.enter()
+        ops = [Unparser.getop(o) for o in t.ops]
+        self.fill(f'"left": ')
+        self.dispatch(t.left)
+        self.fill(f', "ops": ')
+        self.dispatch(ops)
+        self.fill(f', "comparators": ')
+        self.dispatch(t.comparators)
         self.leave()
