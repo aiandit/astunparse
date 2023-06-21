@@ -94,7 +94,8 @@ class Unparser2J:
 #        elif isinstance(tree, ellipsis):
 #            self.write(f'"..."')
         elif isinstance(tree, str):
-            self.write(f'"{tree}"')
+            txt = tree.replace("\n", "\\n").replace("\"", "\\\"")
+            self.write(f'"{txt}"')
         elif isinstance(tree, bytes):
             self.write(f'{"{"}"_class": "bytes",')
             self.fill(f' "value": "{repr(tree)}"{"}"}')

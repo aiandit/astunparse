@@ -40,7 +40,12 @@ setup(
     entry_points={
         'console_scripts': [
             'py2json=astunparse:unparse2jrun',
-            'json2py=astunparse:loadastjrun'
+            'json2py=astunparse:loadastjrun',
+            'json2xml=astunparse:json2xmlrun',
+            'xml2json=astunparse:xml2jsonrun',
+            'py2xml=astunparse:unparse2xrun',
+            'xml2py=astunparse:loadastxrun',
+            'py2json2xml=astunparse:py2json2xmlrun'
         ]
     },
     license="BSD",
