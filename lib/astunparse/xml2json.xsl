@@ -25,12 +25,12 @@
   </xsl:template>
 
   <xsl:template match="*">
+    <xsl:text>"</xsl:text>
     <xsl:value-of select="."/>
+    <xsl:text>"</xsl:text>
   </xsl:template>
-  <xsl:template match="str">
-    <xsl:text>"</xsl:text>
+  <xsl:template match="num|n">
     <xsl:value-of select="."/>
-    <xsl:text>"</xsl:text>
   </xsl:template>
 
   <xsl:template match="*[* or @_class]">

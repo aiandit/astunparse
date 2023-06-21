@@ -70,10 +70,10 @@ class JSON2XMLPrinter:
             self.wend(name)
         elif type(d) == type(''):
             self.wstart(name)
-            self.wstart('str')
+#            self.wstart('str')
             self.write(escapejson(d.replace('&', '&amp;').replace('<', '&lt;')))
-            self.wend('str', False)
-            self.wend(name)
+#            self.wend('str', False)
+            self.wend(name, False)
         else:
             self.wstart(name)
             self.write(json.dumps(d))
