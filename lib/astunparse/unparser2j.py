@@ -104,8 +104,7 @@ class Unparser2J:
             if name in self.abbrev_none_is_ok_in_fields:
                 self.write('0')
             else:
-                self.write(f'{"{"}"_class": "NoneType",')
-                self.fill(f' "value": {self.none}{"}"}')
+                self.write(f'{"{"}"_class": "NoneType"{"}"}')
         else:
             cname = tree.__class__.__name__
             self.write(f'{"{"}"_class": "{cname}"')
