@@ -198,6 +198,15 @@ class AstunparseCommonTestCase:
     def test_del_statement(self):
         self.check_roundtrip("del x, y, z")
 
+    def test_string_with_newline(self):
+        self.check_roundtrip("s = '\\n'")
+
+    def test_string_with_control_chars(self):
+        self.check_roundtrip("s = '\\n\\r\\t\\\\'")
+
+    def test_string_with_xml_control_chars(self):
+        self.check_roundtrip("s = '&amp; < > and & alone'")
+
     def test_shifts(self):
         self.check_roundtrip("45 << 2")
         self.check_roundtrip("13 >> 7")
