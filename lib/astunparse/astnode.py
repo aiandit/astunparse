@@ -49,7 +49,7 @@ class ASTBuilderDict:
                 elif tree["_class"] == "bool":
                     res = True if tree["value"] == "True" else False
                 elif tree["_class"] == "bytes":
-                    res =  ast.literal_eval(tree["value"])
+                    res = ast.literal_eval(tree["value"])
                 elif tree["_class"] == "float":
                     if isinstance(tree["value"], str):
                         res = 1e310
