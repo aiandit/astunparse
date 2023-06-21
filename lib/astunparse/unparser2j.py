@@ -8,6 +8,9 @@ import math
 from .astnode import ASTNode
 from .unparser import Unparser
 
+def escapejson(str):
+    return str.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").replace("\"", "\\\"")
+
 class Unparser2J:
     indentstr = ' '
     indent = 0
@@ -94,7 +97,7 @@ class Unparser2J:
 #        elif isinstance(tree, ellipsis):
 #            self.write(f'"..."')
         elif isinstance(tree, str):
-            txt = tree.replace("\n", "\\n").replace("\"", "\\\"")
+            txt = escapejson(tree)
             self.write(f'"{txt}"')
         elif isinstance(tree, bytes):
             self.write(f'{"{"}"_class": "bytes",')

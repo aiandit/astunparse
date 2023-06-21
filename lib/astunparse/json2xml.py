@@ -5,6 +5,8 @@ import lxml.etree
 import os
 import math
 
+from .unparser2j import escapejson
+
 INFSTR = '1e309'
 
 class JSON2XMLPrinter:
@@ -69,7 +71,7 @@ class JSON2XMLPrinter:
         elif type(d) == type(''):
             self.wstart(name)
             self.wstart('str')
-            self.write(d.replace('&', '&amp;').replace('<', '&lt;'))
+            self.write(escapejson(d.replace('&', '&amp;').replace('<', '&lt;')))
             self.wend('str', False)
             self.wend(name)
         else:
