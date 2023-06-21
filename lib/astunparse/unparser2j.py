@@ -19,6 +19,7 @@ class Unparser2J:
     lineinfo_fields = ['end_lineno', 'end_col_offset', 'lineno', 'col_offset']
     astinfo_fields = ['type_comment', 'ctx', 'type_ignores']
     strip_fields = lineinfo_fields
+    abbrev_none_is_ok_in_fields = ['kwarg', 'kind', 'type_comment', 'asname', 'annotation', 'vararg', 'returns', 'cause', 'lower', 'step']
 
     def __init__(self, output):
         self.output = output
@@ -44,7 +45,7 @@ class Unparser2J:
     def leave(self):
         self.indent -= 1
 
-    def dispatch(self, tree):
+    def dispatch(self, tree, name=None):
         if isinstance(tree, list):
             self.fill(f'[')
             for (i,t) in enumerate(tree):
@@ -65,7 +66,7 @@ class Unparser2J:
                     elem = getattr(tree, k)
                     self.write(f',')
                     self.fill(f'"{k}": ')
-                    self.dispatch(getattr(tree, k))
+                    self.dispatch(getattr(tree, k), k)
                 self.leave()
             self.write(f'{"}"}')
         elif isinstance(tree, bool):
@@ -100,8 +101,11 @@ class Unparser2J:
             self.write(f'{"{"}"_class": "EllipsisType",')
             self.fill(f' "value": "..."{"}"}')
         elif tree is None:
-            self.write(f'{"{"}"_class": "NoneType",')
-            self.fill(f' "value": {self.none}{"}"}')
+            if name in self.abbrev_none_is_ok_in_fields:
+                self.write('0')
+            else:
+                self.write(f'{"{"}"_class": "NoneType",')
+                self.fill(f' "value": {self.none}{"}"}')
         else:
             cname = tree.__class__.__name__
             self.write(f'{"{"}"_class": "{cname}"')
@@ -123,7 +127,7 @@ class Unparser2J:
                     elem = getattr(tree, k)
                     self.write(f',')
                     self.fill(f'"{k}": ')
-                    self.dispatch(getattr(tree, k))
+                    self.dispatch(elem, k)
                 self.leave()
             self.write('}')
 
