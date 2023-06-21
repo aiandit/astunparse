@@ -61,7 +61,8 @@ class Unparser2J:
                 meth(tree)
             else:
                 self.enter()
-                for k in vars(tree).keys():
+                fields = [ f for f in vars(tree).keys() if f not in self.strip_fields ]
+                for k in fields:
                     if k == '_class': continue
                     elem = getattr(tree, k)
                     self.write(f',')
