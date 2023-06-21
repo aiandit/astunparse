@@ -22,7 +22,7 @@ class Unparser2J:
     lineinfo_fields = ['end_lineno', 'end_col_offset', 'lineno', 'col_offset']
     astinfo_fields = ['type_comment', 'ctx', 'type_ignores']
     strip_fields = lineinfo_fields
-    abbrev_none_is_ok_in_fields = ['kwarg', 'kind', 'type_comment', 'asname', 'annotation', 'vararg', 'returns', 'cause', 'lower', 'step']
+    abbrev_none_is_ok_in_fields = ['annotation', 'asname', 'cause', 'kind', 'kwarg', 'lower', 'returns', 'step', 'type_comment', 'type_ignores', 'vararg']
 
     def __init__(self, output):
         self.output = output
