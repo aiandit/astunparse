@@ -51,8 +51,8 @@ def run(parsefun, prog, description='What the program does'):
         input = sys.stdin.read()
         fname = 'stdin'
     else:
-        fname = sys.argv[1]
-        input = open(fname).read()
+        fname = args.filename
+        input = open(args.filename).read()
     out = sys.stdout
     if args.output:
         out = open(args.output, 'w')
