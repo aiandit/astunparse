@@ -65,8 +65,8 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
 
-  <xsl:template match="*[str|num]">
-    <xsl:apply-templates/>
+  <xsl:template match="*[str|num|n and count(*) = 1]">
+    <xsl:apply-templates select="*"/>
   </xsl:template>
 
   <xsl:template match="*[@_class = 'list']">
