@@ -19,10 +19,12 @@ def unparse(tree):
     Unparser(tree, file=v)
     return v.getvalue()
 
+
 def dump(tree):
     v = cStringIO()
     Printer(file=v).visit(tree)
     return v.getvalue()
+
 
 def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok_in_fields=None, strip_fields=None):
     jbuf = cStringIO()
@@ -38,8 +40,10 @@ def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok
     res = up1(tree)
     return jbuf.getvalue()
 
+
 def unparse2x(tree, indent=0, debug=0):
     return json2xml(unparse2j(tree, abbrev_none_is_ok_in_fields=[], debug=debug), indent=indent)
+
 
 def loadastj(jstr, filename='internal.json', **kw):
     jdict = {}
@@ -51,6 +55,7 @@ def loadastj(jstr, filename='internal.json', **kw):
         raise(ex)
     return loadastdict(jdict)
 
+
 def loadastx(xstr, filename='internal.xml'):
     jstr = ''
     try:
@@ -60,6 +65,7 @@ def loadastx(xstr, filename='internal.xml'):
         print(xstr)
         raise(ex)
     return loadastj(jstr)
+
 
 def loadast(source, filename='test.py', **kw):
     if isinstance(source, str):
