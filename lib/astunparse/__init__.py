@@ -24,22 +24,23 @@ def dump(tree):
     Printer(file=v).visit(tree)
     return v.getvalue()
 
-def unparse2j(tree, abbrev_none_is_ok_in_fields=None):
+def unparse2j(tree, indent=0, abbrev_none_is_ok_in_fields=None):
     jbuf = cStringIO()
     up1 = Unparser2J(jbuf)
+    up1.indent = indent
     if abbrev_none_is_ok_in_fields is not None:
         up1.abbrev_none_is_ok_in_fields = abbrev_none_is_ok_in_fields
     res = up1(tree)
     return jbuf.getvalue()
 
 def unparse2jrun():
-    run(lambda x, y: unparse2j(loadast(x, y)))
+    run(lambda x, y: unparse2j(loadast(x, y), indent=1))
 
-def unparse2x(tree):
-    return json2xml(unparse2j(tree, abbrev_none_is_ok_in_fields=[]))
+def unparse2x(tree, indent=0):
+    return json2xml(unparse2j(tree, abbrev_none_is_ok_in_fields=[]), indent=indent)
 
 def unparse2xrun():
-    run(lambda x, y: unparse2x(loadast(x, y)))
+    run(lambda x, y: unparse2x(loadast(x, filename=y), indent=1))
 
 def loadastj(jstr, filename='internal.json'):
     jdict = {}
@@ -52,7 +53,7 @@ def loadastj(jstr, filename='internal.json'):
     return loadastdict(jdict)
 
 def loadastjrun():
-    run(lambda x, y: unparse(loadastj(x, y)))
+    run(lambda x, y: unparse(loadastj(x, filename=y)))
 
 def loadastx(xstr, filename='internal.xml'):
     jstr = ''
@@ -68,10 +69,10 @@ def loadastxrun():
     run(lambda x, y: unparse(loadastx(x, y)))
 
 def json2xmlrun():
-    run(lambda x, y: json2xml(x, y))
+    run(lambda x, y: json2xml(x, filename=y, indent=1))
 
 def xml2jsonrun():
-    run(lambda x, y: xml2json(x, y))
+    run(lambda x, y: xml2json(x, filename=y, indent=1))
 
 def py2json2xmlrun():
     run([loadastpy, unparse2j, json2xml, xml2json, loadastj, unparse])

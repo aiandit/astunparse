@@ -13,16 +13,20 @@ class JSON2XMLPrinter:
     input = {}
     output = None
     level = 0
-    indent = ' '
+    indent = 0
+    indentstr = ' '
 
-    def __init__(self, dict, output=sys.stdout):
-        self.input = dict
+    def __init__(self, output=sys.stdout):
         self.output = output
+
+    def __call__(self, dict):
+        self.input = dict
         self.write('<?xml version="1.0"?>')
         self.dispatch(dict)
 
     def fill(self):
-        self.output.write('\n' + self.indent * self.level)
+        if self.indent:
+            self.output.write('\n' + self.indentstr * self.level * self.indent)
 
     def write(self, str):
         self.output.write(str)
@@ -79,7 +83,7 @@ class JSON2XMLPrinter:
             self.write(json.dumps(d))
             self.wend(name, False)
 
-def runXSLT(docstr, xsltfname, base=None):
+def runXSLT(docstr, xsltfname, params={}, base=None):
     if not os.path.isabs(xsltfname):
         if base is None:
             base = os.path.dirname(sys.modules[__name__].__file__)
@@ -89,15 +93,17 @@ def runXSLT(docstr, xsltfname, base=None):
     xsltdoc = lxml.etree.fromstring(xsltstr)
     transform = lxml.etree.XSLT(xsltdoc)
     xmldoc = lxml.etree.fromstring(docstr)
-    result = transform(xmldoc)
+    result = transform(xmldoc, **params)
     return str(result)
 
-def xml2json(xmlstr, fname=''):
-    return runXSLT(xmlstr, 'xsl/xml2json.xsl')
+def xml2json(xmlstr, indent=0, filename=None):
+    return runXSLT(xmlstr, 'xsl/xml2json.xsl', params={"indentstr": "'%s'" % (' ' * indent)})
 
-def json2xml(jstr, fname=''):
+def json2xml(jstr, indent=0, filename=None):
     jdict = json.loads(jstr)
     output = StringIO()
-    JSON2XMLPrinter(jdict, output)
+    jp = JSON2XMLPrinter(output)
+    jp.indent = indent
+    jp(jdict)
     xstr = output.getvalue()
     return xstr

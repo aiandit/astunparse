@@ -12,8 +12,9 @@ def escapejson(str):
     return str.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t").replace("\"", "\\\"")
 
 class Unparser2J:
-    indentstr = '  '
+    indentstr = ' '
     indent = 0
+    level = 0
     nan = '"NaN"'
     inf = '"Inf"'
     neginf = '"-Inf"'
@@ -31,22 +32,19 @@ class Unparser2J:
         return self.dispatch(tree)
 
     def fill(self, text=''):
-        if self.indentstr:
-            self.write('\n' + self.indentstr * self.indent)
+        if self.indent:
+            self.write('\n' + self.indentstr * self.indent * self.level)
         if text:
             self.write(text)
 
     def write(self, str):
         self.output.write(str)
 
-    def setIndent(self, s):
-        self.indentstr = s
-
     def enter(self):
-        self.indent += 1
+        self.level += 1
 
     def leave(self):
-        self.indent -= 1
+        self.level -= 1
 
     def dispatch(self, tree, name=None):
         if isinstance(tree, list):
