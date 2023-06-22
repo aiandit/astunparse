@@ -34,3 +34,7 @@ class UnparseTestCase(AstunparseCommonTestCase, unittest.TestCase):
         jstr = astunparse.unparse2j(ast1,1)
         ast2 = astunparse.loadast(jstr)
         self.assertASTEqual(ast1, ast2)
+        # test same with indented JSON, normalized tree
+        jstr = astunparse.unparse2j(astunparse.normalize(ast2),1)
+        ast2 = astunparse.loadast(jstr)
+        self.assertASTEqual(ast1, ast2)

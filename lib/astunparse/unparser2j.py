@@ -134,39 +134,3 @@ class Unparser2J:
                     self.dispatch(elem, k)
                 self.leave()
             self.write('}')
-
-    def _BinOp(self, t):
-        self.write(f',')
-        self.enter()
-        self.fill(f'"left":{self.spacer}')
-        self.dispatch(t.left)
-        self.fill(f', "op":{self.spacer}"{Unparser.getop(t.op)}",')
-        self.fill(f'"right":{self.spacer}')
-        self.dispatch(t.right)
-        self.leave()
-
-    def _UnaryOp(self, t):
-        self.write(f',')
-        self.enter()
-        self.fill(f'"op":{self.spacer}"{Unparser.getop(t.op)}", "operand":{self.spacer}')
-        self.dispatch(t.operand)
-        self.leave()
-
-    def _BoolOp(self, t):
-        self.write(f',')
-        self.enter()
-        self.fill(f'"op":{self.spacer}"{Unparser.getop(t.op)}", "values":{self.spacer}')
-        self.dispatch(t.values)
-        self.leave()
-
-    def _Compare(self, t):
-        self.write(f',')
-        self.enter()
-        ops = [Unparser.getop(o) for o in t.ops]
-        self.fill(f'"left":{self.spacer}')
-        self.dispatch(t.left)
-        self.fill(f', "ops":{self.spacer}')
-        self.dispatch(ops)
-        self.fill(f', "comparators":{self.spacer}')
-        self.dispatch(t.comparators)
-        self.leave()

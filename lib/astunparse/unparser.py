@@ -717,8 +717,6 @@ class Unparser:
         if cname == "str":
             opcode = op
         else:
-            if cname == "ASTNode":
-                cname = op._class
             opcode = self.allops[cname]
         return opcode
 

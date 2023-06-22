@@ -1,5 +1,7 @@
 import ast
 
+from .unparser import Unparser
+
 def isgeneric(x):
     return isinstance(x, str)or isinstance(x, bytes) or isinstance(x, tuple) or isinstance(x, list) \
         or isinstance(x, bool) or isinstance(x, int) or isinstance(x, float) or isinstance(x, complex) \
@@ -106,6 +108,34 @@ class ASTBuilderAttr:
             res = tree
         return res
 
+def resolveop(op):
+    if not isinstance(op, str):
+        op = Unparser.allops[op._class]
+    return op
+
+class ASTNormalizer:
+    def __init__(self):
+        pass
+
+    def __call__(self, tree):
+        result = self.dispatch(tree)
+        return result
+
+    def dispatch(self, tree):
+        if type(tree) == type([]):
+            res = list(map(self.dispatch, tree))
+        elif isinstance(tree, ASTNode):
+            if tree._class == 'BinOp' or tree._class == 'UnaryOp' or tree._class == 'BoolOp' or tree._class == 'AugAssign':
+                tree.op = resolveop(tree.op)
+            elif tree._class == 'Compare':
+                tree.ops = [resolveop(o) for o in tree.ops]
+            for k in vars(tree).keys():
+                setattr(tree, k, self.dispatch(getattr(tree, k)))
+            res = tree
+        else:
+            res = tree
+        return res
+
 def loadastpy_raw(source, fname="", mode="exec"):
     tree = compile(source, fname, mode, ast.PyCF_ONLY_AST, dont_inherit=True)
     return tree
@@ -114,11 +144,15 @@ def loadastobj(tree, fname=""):
     jtree = ASTBuilderAttr()(tree)
     return jtree
 
-def loadastpy(source, fname="", mode="exec", **kw):
-    tree = loadastpy_raw(source, fname=fname, mode=mode)
-    jtree = loadastobj(tree)
-    return jtree
-
 def loadastdict(tree, fname=""):
     jtree = ASTBuilderDict()(tree)
+    return jtree
+
+def normalize(tree, **kw):
+    an = ASTNormalizer()
+    return an(tree)
+
+def loadastpy(source, fname="", mode="exec", **kw):
+    tree = loadastpy_raw(source, fname=fname, mode=mode)
+    jtree = normalize(loadastobj(tree))
     return jtree

@@ -6,7 +6,7 @@ import json
 from .unparser import Unparser
 from .printer import Printer
 from .astnode import ASTBuilderAttr, ASTBuilderDict, ASTNode
-from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict
+from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict, normalize
 from .unparser2j import Unparser2J
 from .json2xml import xml2json, json2xml
 
