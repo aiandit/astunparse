@@ -57,7 +57,7 @@ def run(parsefun, prog, description='What the program does'):
     if args.output:
         out = open(args.output, 'w')
     debug = True if args.debug else False
-    indent = args.indent if args.indent else 0
+    indent = args.indent
 
     if isinstance(parsefun, list):
         res = ''
