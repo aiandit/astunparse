@@ -1,5 +1,10 @@
 import ast
 
+def isgeneric(x):
+    return isinstance(x, str)or isinstance(x, bytes) or isinstance(x, tuple) or isinstance(x, list) \
+        or isinstance(x, bool) or isinstance(x, int) or isinstance(x, float) or isinstance(x, complex) \
+        or x is None or x is Ellipsis
+
 class ASTNode:
     def clone(self):
         res = ASTNode()
@@ -74,9 +79,7 @@ class ASTBuilderAttr:
     def dispatch(self, tree):
         if type(tree) == type([]):
             res = list(map(self.dispatch, tree))
-        elif isinstance(tree, str) or  isinstance(tree, tuple()) or isinstance(tree, int) \
-             or isinstance(tree, float) or isinstance(tree, bool) or isinstance(tree, complex) or isinstance(tree, bytes) \
-             or tree is None or tree is Ellipsis:
+        elif isgeneric(tree):
             res = tree
         elif isinstance(tree, object):
             res = ASTNode()
