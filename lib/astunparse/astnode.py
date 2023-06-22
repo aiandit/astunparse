@@ -16,6 +16,14 @@ class ASTNode:
             setattr(res, i, field)
         return res
 
+    def __str__(self):
+        from . import unparse
+        return unparse(self)
+
+    def __repr__(self):
+        from . import unparse2j
+        return unparse2j(self)
+
 class BinOp(ASTNode):
     _class = 'BinOp'
     op = ""
