@@ -35,7 +35,7 @@ def run(parsefun, prog, description='What the program does'):
     parser = argparse.ArgumentParser(
                     prog=prog,
                     description=description)
-    parser.add_argument('filename')
+    parser.add_argument('filename', nargs='?')
     parser.add_argument('-i', '--indent', type=int, const=1, nargs='?')
     parser.add_argument('-o', '--output', type=str,
                         help='Write output to file')
