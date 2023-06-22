@@ -15,6 +15,7 @@ class Unparser2J:
     indentstr = ' '
     indent = 0
     level = 0
+    spacer = ''
     nan = '"NaN"'
     inf = '"Inf"'
     neginf = '"-Inf"'
@@ -29,6 +30,7 @@ class Unparser2J:
         self.output = output
 
     def __call__(self, tree):
+        self.spacer = ' ' if self.indent > 0 else ''
         return self.dispatch(tree)
 
     def fill(self, text=''):
@@ -51,13 +53,13 @@ class Unparser2J:
             self.fill(f'[')
             for (i,t) in enumerate(tree):
                 if i > 0:
-                    self.write(f', ')
+                    self.write(f',{self.spacer}')
                 self.dispatch(t)
             self.write(f']')
         elif isinstance(tree, ASTNode):
             cname = tree._class
             meth = getattr(self, "_"+cname, None)
-            self.write(f'{"{"}"_class": "{cname}"')
+            self.write(f'{"{"}"_class":{self.spacer}"{cname}"')
             if meth:
                 meth(tree)
             else:
@@ -67,12 +69,12 @@ class Unparser2J:
                     if k == '_class': continue
                     elem = getattr(tree, k)
                     self.write(f',')
-                    self.fill(f'"{k}": ')
+                    self.fill(f'"{k}":{self.spacer}')
                     self.dispatch(getattr(tree, k), k)
                 self.leave()
             self.write(f'{"}"}')
         elif isinstance(tree, bool):
-            self.write(f'{"{"}"_class": "bool",')
+            self.write(f'{"{"}"_class":{self.spacer}"bool",')
             self.fill(f' "value": "{repr(tree)}"{"}"}')
         elif isinstance(tree, int):
             self.write(f'{tree:d}')
@@ -80,16 +82,16 @@ class Unparser2J:
             if math.isinf(tree):
                 self.fill('1e309')
             elif math.isnan(tree):
-                self.write(f'{"{"}"_class": "float",')
+                self.write(f'{"{"}"_class":{self.spacer}"float",')
                 self.fill(f' "value": {self.nan}{"}"}')
             else:
                 self.write(f'{tree:f}')
         elif isinstance(tree, complex):
-            self.write(f'{"{"}"_class": "complex",')
-            self.fill(f' "real": ')
+            self.write(f'{"{"}"_class":{self.spacer}"complex",')
+            self.fill(f' "real":{self.spacer}')
             self.dispatch(tree.real)
             self.write(',')
-            self.fill(f' "imag": ')
+            self.fill(f' "imag":{self.spacer}')
             self.dispatch(tree.imag)
             self.write(f'{"}"}')
 #        elif isinstance(tree, ellipsis):
@@ -98,19 +100,19 @@ class Unparser2J:
             txt = escapejson(tree)
             self.write(f'"{txt}"')
         elif isinstance(tree, bytes):
-            self.write(f'{"{"}"_class": "bytes",')
+            self.write(f'{"{"}"_class":{self.spacer}"bytes",')
             self.fill(f' "value": "{repr(tree)}"{"}"}')
         elif tree is Ellipsis:
-            self.write(f'{"{"}"_class": "EllipsisType",')
+            self.write(f'{"{"}"_class":{self.spacer}"EllipsisType",')
             self.fill(f' "value": "..."{"}"}')
         elif tree is None:
             if name in self.abbrev_none_is_ok_in_fields:
                 self.write('0')
             else:
-                self.write(f'{"{"}"_class": "NoneType"{"}"}')
+                self.write(f'{"{"}"_class":{self.spacer}"NoneType"{"}"}')
         else:
             cname = tree.__class__.__name__
-            self.write(f'{"{"}"_class": "{cname}"')
+            self.write(f'{"{"}"_class":{self.spacer}"{cname}"')
             meth = getattr(self, "_"+cname, None)
             if meth:
                 meth(tree)
@@ -128,7 +130,7 @@ class Unparser2J:
                 for k in fields:
                     elem = getattr(tree, k)
                     self.write(f',')
-                    self.fill(f'"{k}": ')
+                    self.fill(f'"{k}":{self.spacer}')
                     self.dispatch(elem, k)
                 self.leave()
             self.write('}')
@@ -136,24 +138,24 @@ class Unparser2J:
     def _BinOp(self, t):
         self.write(f',')
         self.enter()
-        self.fill(f'"left": ')
+        self.fill(f'"left":{self.spacer}')
         self.dispatch(t.left)
-        self.fill(f', "op": "{Unparser.getop(t.op)}",')
-        self.fill(f'"right": ')
+        self.fill(f', "op":{self.spacer}"{Unparser.getop(t.op)}",')
+        self.fill(f'"right":{self.spacer}')
         self.dispatch(t.right)
         self.leave()
 
     def _UnaryOp(self, t):
         self.write(f',')
         self.enter()
-        self.fill(f'"op": "{Unparser.getop(t.op)}", "operand": ')
+        self.fill(f'"op":{self.spacer}"{Unparser.getop(t.op)}", "operand":{self.spacer}')
         self.dispatch(t.operand)
         self.leave()
 
     def _BoolOp(self, t):
         self.write(f',')
         self.enter()
-        self.fill(f'"op": "{Unparser.getop(t.op)}", "values": ')
+        self.fill(f'"op":{self.spacer}"{Unparser.getop(t.op)}", "values":{self.spacer}')
         self.dispatch(t.values)
         self.leave()
 
@@ -161,10 +163,10 @@ class Unparser2J:
         self.write(f',')
         self.enter()
         ops = [Unparser.getop(o) for o in t.ops]
-        self.fill(f'"left": ')
+        self.fill(f'"left":{self.spacer}')
         self.dispatch(t.left)
-        self.fill(f', "ops": ')
+        self.fill(f', "ops":{self.spacer}')
         self.dispatch(ops)
-        self.fill(f', "comparators": ')
+        self.fill(f', "comparators":{self.spacer}')
         self.dispatch(t.comparators)
         self.leave()
