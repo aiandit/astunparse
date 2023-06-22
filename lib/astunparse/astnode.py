@@ -103,7 +103,7 @@ def loadastobj(tree, fname=""):
     jtree = ASTBuilderAttr()(tree)
     return jtree
 
-def loadastpy(source, fname="", mode="exec"):
+def loadastpy(source, fname="", mode="exec", **kw):
     tree = loadastpy_raw(source, fname=fname, mode=mode)
     jtree = loadastobj(tree)
     return jtree

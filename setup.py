@@ -40,13 +40,13 @@ setup(
     install_requires=read_reqs('requirements.txt'),
     entry_points={
         'console_scripts': [
-            'py2json=astunparse:unparse2jrun',
-            'json2py=astunparse:loadastjrun',
-            'json2xml=astunparse:json2xmlrun',
-            'xml2json=astunparse:xml2jsonrun',
-            'py2xml=astunparse:unparse2xrun',
-            'xml2py=astunparse:loadastxrun',
-            'py2json2xml=astunparse:py2json2xmlrun'
+            'py2json=astunparse.cmdline:unparse2jrun',
+            'json2py=astunparse.cmdline:loadastjrun',
+            'json2xml=astunparse.cmdline:json2xmlrun',
+            'xml2json=astunparse.cmdline:xml2jsonrun',
+            'py2xml=astunparse.cmdline:unparse2xrun',
+            'xml2py=astunparse.cmdline:loadastxrun',
+            'py2json2xml=astunparse.cmdline:py2json2xmlrun'
         ]
     },
     license="BSD",

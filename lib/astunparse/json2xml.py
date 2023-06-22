@@ -96,10 +96,10 @@ def runXSLT(docstr, xsltfname, params={}, base=None):
     result = transform(xmldoc, **params)
     return str(result)
 
-def xml2json(xmlstr, indent=0, filename=None):
+def xml2json(xmlstr, filename=None, indent=0, **kw):
     return runXSLT(xmlstr, 'xsl/xml2json.xsl', params={"indentstr": "'%s'" % (' ' * indent)})
 
-def json2xml(jstr, indent=0, filename=None):
+def json2xml(jstr, filename=None, indent=0, **kw):
     jdict = json.loads(jstr)
     output = StringIO()
     jp = JSON2XMLPrinter(output)
