@@ -36,7 +36,7 @@ def run(parsefun, prog, description='What the program does'):
                     prog=prog,
                     description=description)
     parser.add_argument('filename', nargs='?')
-    parser.add_argument('-i', '--indent', type=int, const=1, nargs='?')
+    parser.add_argument('-i', '--indent', type=int, default=0, const=1, nargs='?')
     parser.add_argument('-o', '--output', type=str,
                         help='Write output to file')
     parser.add_argument('-g', '--debug', type=str, nargs='?', const='x',
