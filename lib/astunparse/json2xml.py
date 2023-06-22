@@ -79,7 +79,11 @@ class JSON2XMLPrinter:
             self.write(json.dumps(d))
             self.wend(name, False)
 
-def runXSLT(docstr, xsltfname):
+def runXSLT(docstr, xsltfname, base=None):
+    if not os.path.isabs(xsltfname):
+        if base is None:
+            base = os.path.dirname(sys.modules[__name__].__file__)
+        xsltfname = os.path.join(base, xsltfname)
     with open(xsltfname) as f:
         xsltstr = f.read()
     xsltdoc = lxml.etree.fromstring(xsltstr)
@@ -89,7 +93,7 @@ def runXSLT(docstr, xsltfname):
     return str(result)
 
 def xml2json(xmlstr, fname=''):
-    return runXSLT(xmlstr, 'xml2json.xsl')
+    return runXSLT(xmlstr, 'xsl/xml2json.xsl')
 
 def json2xml(jstr, fname=''):
     jdict = json.loads(jstr)
