@@ -124,7 +124,7 @@ class Unparser:
     def _AugAssign(self, t):
         self.fill()
         self.dispatch(t.target)
-        self.write(" "+self.binop[t.op.__class__.__name__]+"= ")
+        self.write(" "+self.getop(t.op)+"= ")
         self.dispatch(t.value)
 
     def _AnnAssign(self, t):
@@ -688,14 +688,7 @@ class Unparser:
     def _BinOp(self, t):
         self.write("(")
         self.dispatch(t.left)
-        cname = t.op.__class__.__name__
-        if cname == "str":
-            op = t.op
-        else:
-            if cname == "ASTNode":
-                cname = t.op._class
-            op = self.binop[cname]
-        self.write(" " + op + " ")
+        self.write(" " + self.getop(t.op) + " ")
         self.dispatch(t.right)
         self.write(")")
 
