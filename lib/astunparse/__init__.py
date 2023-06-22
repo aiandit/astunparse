@@ -104,7 +104,6 @@ def run(parsefun):
         res = ''
         for i, pfun in enumerate(parsefun):
             res = pfun(input)
-            print(pfun, res)
             if os.getenv('DEBUGAST'):
                 if isinstance(res, str):
                     with open(fname + '.' + f'{i}', 'w') as f:
