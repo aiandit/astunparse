@@ -12,9 +12,9 @@ class UnparseTestCase(AstunparseCommonTestCase, unittest.TestCase):
 
     def assertASTEqual(self, ast1, ast2):
         # check XML representation is identical
-        if astunparse.unparse2x(ast1, 1) != astunparse.unparse2x(ast2, 1):
-            print('Fail', astunparse.unparse2x(ast1, 1), astunparse.unparse2x(ast2, 1))
-        self.assertEqual(astunparse.unparse2x(ast1, 1), astunparse.unparse2x(ast2, 1))
+        if astunparse.unparse2x(ast1, indent=1) != astunparse.unparse2x(ast2, indent=1):
+            print('Fail', astunparse.unparse2x(ast1, indent=1), astunparse.unparse2x(ast2, indent=1))
+        self.assertEqual(astunparse.unparse2x(ast1, indent=1), astunparse.unparse2x(ast2, indent=1))
         # check Python code is identical
         if astunparse.unparse(ast1) != astunparse.unparse(ast2):
             print('Fail', astunparse.unparse(ast1), astunparse.unparse(ast2))
