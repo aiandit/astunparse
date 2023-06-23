@@ -3,11 +3,11 @@ import sys, os, argparse
 from . import *
 
 def unparse2jrun():
-    run(lambda x, y, **kw: unparse2j(loadast(x, filename=y, **kw), **kw),
+    run(lambda x, y, **kw: unparse2j(loadastpy(x, filename=y, **kw), **kw),
         prog="py2json", description="Convert Python code to JSON")
 
 def unparse2xrun():
-    run(lambda x, y, **kw: unparse2x(loadast(x, filename=y, **kw), **kw),
+    run(lambda x, y, **kw: unparse2x(loadastpy(x, filename=y, **kw), **kw),
         prog="py2xml", description="Convert Python code to XML")
 
 def loadastjrun():
