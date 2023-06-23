@@ -32,7 +32,7 @@
     <xsl:value-of select="."/>
     <xsl:text>"</xsl:text>
   </xsl:template>
-  <xsl:template match="num|n">
+  <xsl:template match="num">
     <xsl:value-of select="."/>
   </xsl:template>
 
@@ -65,7 +65,7 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
 
-  <xsl:template match="*[str|num|n and count(*) = 1]">
+  <xsl:template match="*[str|num and count(*) = 1]">
     <xsl:apply-templates select="*"/>
   </xsl:template>
 
