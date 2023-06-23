@@ -148,11 +148,11 @@ def loadastdict(tree, fname=""):
     jtree = ASTBuilderDict()(tree)
     return jtree
 
-def normalize(tree, **kw):
-    an = ASTNormalizer()
-    return an(tree)
-
 def loadastpy(source, fname="", mode="exec", **kw):
     tree = loadastpy_raw(source, fname=fname, mode=mode)
     jtree = normalize(loadastobj(tree))
     return jtree
+
+def normalize(tree, **kw):
+    an = ASTNormalizer()
+    return an(tree)
