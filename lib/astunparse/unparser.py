@@ -64,8 +64,11 @@ class Unparser:
             return
         cname = tree.__class__.__name__
         if cname == "ASTNode": cname = tree._class
-        meth = getattr(self, "_"+cname)
-        meth(tree)
+        meth = getattr(self, "_"+cname, None)
+        if meth:
+            meth(tree)
+        else:
+            self.write('"<' + cname + '>"')
 
 
     ############### Unparsing methods ######################
