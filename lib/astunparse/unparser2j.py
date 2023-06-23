@@ -5,7 +5,7 @@ import ast
 import json
 import math
 
-from .astnode import ASTNode
+from .astnode import ASTNode, fields
 from .unparser import Unparser
 
 def escapejson(str):
@@ -64,8 +64,8 @@ class Unparser2J:
                 meth(tree)
             else:
                 self.enter()
-                fields = [ f for f in vars(tree).keys() if f not in self.strip_fields ]
-                for k in fields:
+                fieldnames = [ f for f in fields(tree) if f not in self.strip_fields ]
+                for k in fieldnames:
                     if k == '_class': continue
                     elem = getattr(tree, k)
                     self.write(f',')
@@ -118,16 +118,8 @@ class Unparser2J:
                 meth(tree)
             else:
                 self.enter()
-                fieldnames = {}
-                try:
-                    fieldnames = vars(tree)
-                except BaseException as ex:
-                    print(f'type {type(tree)} does not have dict!')
-                    print(tree)
-                    print(ex)
-                    pass
-                fields = [ f for f in fieldnames if f not in self.strip_fields ]
-                for k in fields:
+                fieldnames = [ f for f in fields(tree) if f not in self.strip_fields ]
+                for k in fieldnames:
                     elem = getattr(tree, k)
                     self.write(f',')
                     self.fill(f'"{k}":{self.spacer}')

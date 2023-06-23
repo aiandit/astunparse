@@ -1,6 +1,19 @@
 import ast
-
 from .unparser import Unparser
+
+# with fastFields == True the code is about twice as fast, but only
+# works as long as all fields are set in code (like in __init__ or
+# anywhere else, by obj.field= or setattr), and not in the class
+# def. The node classes BinOp, Name, etc. follow this rule.
+fastFields = True
+
+def fields(x):
+    if fastFields:
+        return vars(x)
+    else:
+        xfields = getattr(x, '__dict__', {})
+        cfields = getattr(x.__class__, '__dict__', {})
+        return [f for f,v in (cfields|xfields).items() if "__" not in f and not callable(v)]
 
 def isgeneric(x):
     return isinstance(x, str)or isinstance(x, bytes) or isinstance(x, tuple) or isinstance(x, list) \
@@ -10,8 +23,7 @@ def isgeneric(x):
 class ASTNode:
     def clone(self):
         res = ASTNode()
-        print('vars', vars(self))
-        for i in vars(self):
+        for i in fields(self):
             field = getattr(self, i)
             if isinstance(field, ASTNode):
                 field = field.clone()
@@ -27,21 +39,22 @@ class ASTNode:
         return unparse2j(self)
 
 class BinOp(ASTNode):
-    _class = 'BinOp'
-    op = ""
-    left = None
-    right = None
-
     def __init__(self, op):
+        self._class = 'BinOp'
         self.op = op
+        self.left = None
+        self.right = None
 
 class Constant(ASTNode):
-    _class = 'Constant'
-    value = ""
-    kind = ""
-
     def __init__(self, n):
+        self._class = 'Constant'
+        self.kind = ""
         self.value = n
+
+class Name(ASTNode):
+    def __init__(self, id):
+        self._class = 'Name'
+        self.id = id
 
 class ASTBuilderDict:
     def __init__(self):
@@ -96,7 +109,7 @@ class ASTBuilderAttr:
             setattr(res, "_class", tree.__class__.__name__)
             keys = []
             try:
-                keys = vars(tree).keys()
+                keys = fields(tree)
             except:
                 try:
                     keys = tree.__slots__.keys()
@@ -129,7 +142,7 @@ class ASTNormalizer:
                 tree.op = resolveop(tree.op)
             elif tree._class == 'Compare':
                 tree.ops = [resolveop(o) for o in tree.ops]
-            for k in vars(tree).keys():
+            for k in fields(tree):
                 setattr(tree, k, self.dispatch(getattr(tree, k)))
             res = tree
         else:
