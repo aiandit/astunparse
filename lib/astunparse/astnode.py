@@ -20,15 +20,25 @@ def isgeneric(x):
         or isinstance(x, bool) or isinstance(x, int) or isinstance(x, float) or isinstance(x, complex) \
         or x is None or x is Ellipsis
 
+def clone(x):
+    if isinstance(x, list):
+        res = [clone(f) for f in x]
+    elif isinstance(x, tuple):
+        res = tuple([clone(f) for f in x])
+    elif isinstance(x, dict):
+        res = {k: clone(v) for k, v in x.items()}
+    elif isinstance(x, ASTNode):
+        res = ASTNode()
+        for i in fields(x):
+            field = getattr(x, i)
+            setattr(res, i, clone(field))
+    else:
+        res = x
+    return res
+
 class ASTNode:
     def clone(self):
-        res = ASTNode()
-        for i in fields(self):
-            field = getattr(self, i)
-            if isinstance(field, ASTNode):
-                field = field.clone()
-            setattr(res, i, field)
-        return res
+        return clone(self)
 
     def __str__(self):
         from . import unparse
