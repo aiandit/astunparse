@@ -7,8 +7,8 @@ from .unparser import Unparser
 # def. The node classes BinOp, Name, etc. follow this rule.
 fastFields = True
 
-def fields(x):
-    if fastFields:
+def fields(x, all=False):
+    if fastFields and not all:
         return vars(x)
     else:
         xfields = getattr(x, '__dict__', {})
