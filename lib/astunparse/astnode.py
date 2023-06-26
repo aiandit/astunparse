@@ -13,7 +13,7 @@ def fields(x):
     else:
         xfields = getattr(x, '__dict__', {})
         cfields = getattr(x.__class__, '__dict__', {})
-        return [f for f,v in (cfields|xfields).items() if "__" not in f and not callable(v)]
+        return [f for f, v in (cfields | xfields).items() if "__" not in f and not callable(v)]
 
 def isgeneric(x):
     return isinstance(x, str)or isinstance(x, bytes) or isinstance(x, tuple) or isinstance(x, list) \
