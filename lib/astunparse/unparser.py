@@ -56,7 +56,7 @@ class Unparser:
         "Decrease the indentation level."
         self._indent -= 1
 
-    def dispatch(self, tree):
+    def dispatch(self, tree, **kw):
         "Dispatcher function, dispatching tree type T to method _T."
         if isinstance(tree, list):
             for t in tree:
@@ -66,7 +66,7 @@ class Unparser:
         if cname == "ASTNode": cname = tree._class
         meth = getattr(self, "_"+cname, None)
         if meth:
-            meth(tree)
+            meth(tree, **(kw if meth.__name__ in ["_Tuple"] else {}))
         else:
             self.write('"<' + cname + '>"')
 
@@ -660,15 +660,15 @@ class Unparser:
         interleave(lambda: self.write(", "), write_item, zip(t.keys, t.values))
         self.write("}")
 
-    def _Tuple(self, t):
-        self.write("(")
+    def _Tuple(self, t, noparen=False, **kw):
+        if not noparen: self.write("(")
         if len(t.elts) == 1:
             elt = t.elts[0]
             self.dispatch(elt)
             self.write(",")
         else:
             interleave(lambda: self.write(", "), self.dispatch, t.elts)
-        self.write(")")
+        if not noparen: self.write(")")
 
     unop = {"Invert":"~", "Not": "not", "UAdd":"+", "USub":"-"}
     def _UnaryOp(self, t):
@@ -764,7 +764,7 @@ class Unparser:
     def _Subscript(self, t):
         self.dispatch(t.value)
         self.write("[")
-        self.dispatch(t.slice)
+        self.dispatch(t.slice, noparen=True)
         self.write("]")
 
     def _Starred(self, t):
