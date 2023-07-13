@@ -47,6 +47,38 @@ def g():
     z = 3
 """
 
+assorted_operators = """\
+def g():
+    while True:
+        break
+    else:
+        x = y + z
+        x = y - z
+        x = y / z
+        x = y * z
+        x = y % z
+        x = y ** z
+
+        x = y & z
+        x = y | z
+        x = y ^ z
+
+        x += z
+        x -= z
+        x /= z
+        x *= z
+        x %= z
+        x **= z
+
+        x &= z
+        x |= z
+        x ^= z
+
+        x = y and z
+        x = y or z
+    z = 3
+"""
+
 relative_import = """\
 from . import fred
 from .. import barney
@@ -219,6 +251,9 @@ class AstunparseCommonTestCase:
 
     def test_while_else(self):
         self.check_roundtrip(while_else)
+
+    def test_assorted_operators(self):
+        self.check_roundtrip(assorted_operators)
 
     def test_unary_parens(self):
         self.check_roundtrip("(-1)**7")
