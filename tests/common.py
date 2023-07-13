@@ -175,6 +175,9 @@ class AstunparseCommonTestCase:
     def check_roundtrip(self, code1, filename="internal", mode="exec"):
         raise NotImplementedError()
 
+    def unparse_all_items(self, code1, filename="internal", mode="exec"):
+        pass
+
     test_directories = [
         os.path.join(getattr(sys, 'real_prefix', sys.prefix),
                      'lib', 'python%s.%s' % sys.version_info[:2])]
@@ -346,6 +349,7 @@ class AstunparseCommonTestCase:
     @unittest.skipUnless(sys.version_info[:2] >= (3, 6), "Only for Python 3.6 or greater")
     def test_complex_f_string(self):
         self.check_roundtrip(complex_f_string)
+        self.unparse_all_items(complex_f_string)
 
     @unittest.skipUnless(six.PY3, "Only for Python 3")
     def test_annotations(self):
