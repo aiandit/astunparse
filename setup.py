@@ -36,7 +36,19 @@ setup(
     packages=find_packages('lib'),
     package_dir={'': 'lib'},
     include_package_data=True,
+    package_data={'': ['lib/astunparse/xsl/xml2json.xsl']},
     install_requires=read_reqs('requirements.txt'),
+    entry_points={
+        'console_scripts': [
+            'py2json=astunparse.cmdline:unparse2jrun',
+            'json2py=astunparse.cmdline:loadastjrun',
+            'json2xml=astunparse.cmdline:json2xmlrun',
+            'xml2json=astunparse.cmdline:xml2jsonrun',
+            'py2xml=astunparse.cmdline:unparse2xrun',
+            'xml2py=astunparse.cmdline:loadastxrun',
+            'py2json2xml=astunparse.cmdline:py2json2xmlrun'
+        ]
+    },
     license="BSD",
     zip_safe=False,
     keywords='astunparse',
@@ -52,6 +64,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Code Generators',
     ],
     test_suite='tests',
