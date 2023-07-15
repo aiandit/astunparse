@@ -62,8 +62,7 @@ class Unparser:
             for t in tree:
                 self.dispatch(t)
             return
-        cname = tree.__class__.__name__
-        if cname == "ASTNode": cname = tree._class
+        cname = getattr(tree, '_class', tree.__class__.__name__)
         meth = getattr(self, "_"+cname, None)
         if meth:
             meth(tree, **(kw if meth.__name__ in ["_Tuple"] else {}))
@@ -491,8 +490,7 @@ class Unparser:
         self.write(repr(string.getvalue()))
 
     def _fstring_JoinedStr1(self, value, write):
-        cname = type(value).__name__
-        if cname == "ASTNode": cname = value._class
+        cname = getattr(value, '_class', type(value).__name__)
         meth = getattr(self, "_fstring_" + cname)
         meth(value, write)
 
@@ -523,8 +521,7 @@ class Unparser:
             write("!{conversion}".format(conversion=conversion))
         if t.format_spec:
             write(":")
-            cname = type(t.format_spec).__name__
-            if cname == "ASTNode": cname = t.format_spec._class
+            cname = getattr(t.format_spec, '_class', type(t.format_spec).__name__)
             meth = getattr(self, "_fstring_" + cname)
             meth(t.format_spec, write)
         write("}")
