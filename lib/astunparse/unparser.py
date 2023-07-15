@@ -11,6 +11,12 @@ from six import StringIO
 # We unparse those infinities to INFSTR.
 INFSTR = "1e" + repr(sys.float_info.max_10_exp + 1)
 
+def merge_dicts(x, *args):
+    z = x.copy()
+    for d in args:
+        z.update(d)
+    return z
+
 def interleave(inter, f, seq):
     """Call f on each item in seq, calling inter() in between.
     """
@@ -712,7 +718,7 @@ class Unparser:
         interleave(lambda: self.write(s), self.dispatch, t.values)
         self.write(")")
 
-    allops = binop | unop | cmpops | boolops
+    allops = merge_dicts(binop, unop, cmpops, boolops)
     @classmethod
     def getop(self, op):
         opcode = ''
