@@ -49,7 +49,7 @@ class ASTNode:
         return unparse(self)
 
     def __repr__(self):
-        return "ASTNode[%s]" % (self._class,)
+        return "ASTNode[%s]" % (getattr(self, '._class', 'unknown'))
 
 class BinOp(ASTNode):
     def __init__(self, op):
