@@ -41,3 +41,7 @@ dist: clean
 	python setup.py bdist_wheel
 	python setup.py bdist_egg
 	ls -l dist
+
+PIP ?= pip
+install: dist
+	$(PIP) install -I $(shell ls -1rt dist/*.whl | tail -n 1)
