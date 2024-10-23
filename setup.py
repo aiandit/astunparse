@@ -36,7 +36,7 @@ setup(
     packages=find_packages('lib'),
     package_dir={'': 'lib'},
     include_package_data=True,
-    package_data={'': ['lib/astunparse/xsl/xml2json.xsl']},
+    package_data={'astunparse': ['xsl/xml2json.xsl']},
     install_requires=read_reqs('requirements.txt'),
     entry_points={
         'console_scripts': [
