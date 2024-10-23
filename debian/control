@@ -2,14 +2,14 @@ Source: astunparse-aiandit
 Section: misc
 Priority: optional
 Maintainer: Johannes Willkomm <j.willkomm@fionec.de>
-Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-build, python3-setuptools, python3-pip
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-build, python3-setuptools, python3-pip, python3-lxml
 Standards-Version: 4.5.1
 Homepage: https://ai-and-it.de/
 Rules-Requires-Root: no
 
 Package: python3-astunparse-aiandit
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, python3
+Depends: ${python3:Depends}, ${misc:Depends}, python3, python3-lxml
 Description: AST unparser for Python
  Output python compiler parser trees (AST) in Python. Can also be used
  to traverse and process ASTs
