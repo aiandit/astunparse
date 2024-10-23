@@ -1,1 +1,3 @@
 0001-Remove-version-constraints.patch
+0002-Modernize-Makefile.patch
+0003-test_dump.py-does-not-work-anymore-ast-dumps-have-di.patch

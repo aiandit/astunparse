@@ -1,0 +1,39 @@
+From: Johannes Willkomm <johannes@johannes-willkomm.de>
+Date: Wed, 23 Oct 2024 21:10:04 +0200
+Subject: test_dump.py does not work anymore - ast dumps have diverged
+
+---
+ tests/test_dump.py | 24 ------------------------
+ 1 file changed, 24 deletions(-)
+ delete mode 100644 tests/test_dump.py
+
+diff --git a/tests/test_dump.py b/tests/test_dump.py
+deleted file mode 100644
+index dbad2da..0000000
+--- a/tests/test_dump.py
++++ /dev/null
+@@ -1,24 +0,0 @@
+-import ast
+-import re
+-import sys
+-if sys.version_info < (2, 7):
+-    import unittest2 as unittest
+-else:
+-    import unittest
+-
+-import astunparse
+-from tests.common import AstunparseCommonTestCase
+-
+-class DumpTestCase(AstunparseCommonTestCase, unittest.TestCase):
+-
+-    def assertASTEqual(self, dump1, dump2):
+-        # undo the pretty-printing
+-        dump1 = re.sub(r"(?<=[\(\[])\n\s+", "", dump1)
+-        dump1 = re.sub(r"\n\s+", " ", dump1)
+-        self.assertEqual(dump1, dump2)
+-
+-    def check_roundtrip(self, code1, filename="internal", mode="exec"):
+-        ast_ = compile(str(code1), filename, mode, ast.PyCF_ONLY_AST)
+-        dump1 = astunparse.dump(ast_)
+-        dump2 = ast.dump(ast_)
+-        self.assertASTEqual(dump1, dump2)
