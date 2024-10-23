@@ -1,3 +1,13 @@
+astunparse-aiandit (1.6.4-1) unstable; urgency=medium
+
+  * Pkg version 1.6.4
+  * Update description
+  * use pybuild, pip
+  * Uses lxml
+  * Omit some tests from test suite
+
+ -- Johannes Willkomm <johannes.willkomm@googlemail.com>  Wed, 23 Oct 2024 21:25:15 +0200
+
 astunparse-aiandit (1.6.4-0) unstable; urgency=medium
 
   * First version 1.6.4 of astunparse-aiandit
