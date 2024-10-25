@@ -185,7 +185,9 @@ class AstunparseCommonTestCase:
 
     test_directories = [
         os.path.join(getattr(sys, 'real_prefix', sys.prefix),
-                     'lib', 'python%s.%s' % sys.version_info[:2])]
+                     'lib', 'python%s.%s' % sys.version_info[:2]),
+        'lib/astunparse'
+    ]
 
     def test_files(self):
         names = []
