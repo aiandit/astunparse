@@ -2,6 +2,8 @@ import sys, os, argparse
 
 from . import *
 
+from . import __version__
+
 def unparse2jrun():
     run(lambda x, y, **kw: unparse2j(loadastpy(x, filename=y, **kw), **kw),
         prog="py2json", description="Convert Python code to JSON")
@@ -41,8 +43,8 @@ def run(parsefun, prog, description='What the program does'):
                         help='Write output to file')
     parser.add_argument('-g', '--debug', type=str, nargs='?', const='x',
                         help='Keep line number information')
-    parser.add_argument('-v', '--verbose',
-                        action='store_true')
+    version = __version__
+    parser.add_argument('-v', '--verbose', action='version', version=f'{prog} {version}')
 
     args = parser.parse_args()
 
