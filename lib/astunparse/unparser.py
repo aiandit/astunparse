@@ -469,18 +469,22 @@ class Unparser:
             else:
                 assert False, "shouldn't get here"
 
+    quote_types1 = ["'", '"']
+    quote_types2 = ["'''", '"""']
     def _JoinedStr(self, t):
         # JoinedStr(expr* values)
         self.write("f")
         string = StringIO()
+        # fstring_JoinedStr will use '"' as quote for formatted str
+        # constants if the regular string constants also contain '"'
         self._fstring_JoinedStr(t, string.write)
         # Deviation from `unparse.py`: Try to find an unused quote.
         # This change is made to handle _very_ complex f-strings.
         v = string.getvalue()
         if '\n' in v or '\r' in v:
-            quote_types = ["'''", '"""']
+            quote_types = self.quote_types1
         else:
-            quote_types = ["'", '"', '"""', "'''"]
+            quote_types = self.quote_types1 + self.quote_types2
         for quote_type in quote_types:
             if quote_type not in v:
                 v = "{quote_type}{v}{quote_type}".format(quote_type=quote_type, v=v)
@@ -496,31 +500,41 @@ class Unparser:
         self._fstring_JoinedStr1(t, string.write)
         self.write(repr(string.getvalue()))
 
-    def _fstring_JoinedStr1(self, value, write):
-        cname = getattr(value, '_class', type(value).__name__)
+    def getClass(self, value):
+        return getattr(value, '_class', type(value).__name__)
+
+    def _fstring_JoinedStr1(self, value, write, strquote):
+        cname = self.getClass(value)
         meth = getattr(self, "_fstring_" + cname)
-        meth(value, write)
+        meth(value, write, strquote)
 
     def _fstring_JoinedStr(self, t, write):
+        conststr = [v.value for v in t.values if self.getClass(v) == "Constant"]
+        strquote = "'"
+        if "'" in ''.join(conststr):
+            strquote = '"'
         for value in t.values:
-            self._fstring_JoinedStr1(value, write)
+            self._fstring_JoinedStr1(value, write, strquote)
 
     def _fstring_Str(self, t, write):
         value = t.s.replace("{", "{{").replace("}", "}}")
         write(value)
 
-    def _fstring_Constant(self, t, write):
+    def _fstring_Constant(self, t, write, strquote):
         assert isinstance(t.value, str)
         value = t.value.replace("{", "{{").replace("}", "}}")
         write(value)
 
-    def _fstring_FormattedValue(self, t, write):
+    def _fstring_FormattedValue(self, t, write, strquote):
         write("{")
         expr = StringIO()
         Unparser(t.value, expr)
         expr = expr.getvalue().rstrip("\n")
         if expr.startswith("{"):
             write(" ")  # Separate pair of opening brackets as "{ {"
+        elif any([expr.startswith(q) for q in self.quote_types1]):
+            if expr[0] != strquote:
+                expr = strquote + expr[1:-1] + strquote
         write(expr)
         if t.conversion != -1:
             conversion = chr(t.conversion)
