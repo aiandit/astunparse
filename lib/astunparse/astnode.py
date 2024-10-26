@@ -162,20 +162,20 @@ class ASTNormalizer:
             res = tree
         return res
 
-def loadastpy_raw(source, fname="", mode="exec"):
-    tree = compile(source, fname, mode, ast.PyCF_ONLY_AST, dont_inherit=True)
+def loadastpy_raw(source, filename="", mode="exec"):
+    tree = compile(source, filename, mode, ast.PyCF_ONLY_AST, dont_inherit=True)
     return tree
 
-def loadastobj(tree, fname=""):
+def loadastobj(tree, filename=""):
     jtree = ASTBuilderAttr()(tree)
     return jtree
 
-def loadastdict(tree, fname=""):
+def loadastdict(tree, filename=""):
     jtree = ASTBuilderDict()(tree)
     return jtree
 
-def loadastpy(source, fname="", mode="exec", **kw):
-    tree = loadastpy_raw(source, fname=fname, mode=mode)
+def loadastpy(source, filename="", mode="exec", **kw):
+    tree = loadastpy_raw(source, filename=filename, mode=mode)
     jtree = normalize(loadastobj(tree))
     return jtree
 

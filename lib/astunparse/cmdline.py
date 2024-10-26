@@ -4,6 +4,14 @@ from . import *
 
 from . import __version__
 
+def unparse2pyrun():
+    run(lambda x, y, **kw: unparse(loadastpy(x, filename=y, **kw), **kw),
+        prog="py2py", description="Load Python code and pretty-print")
+
+def pydumprun():
+    run(lambda x, y, **kw: ast_dump(loadastpy_raw(x, filename=y), **kw),
+        prog="pydump", description="Load Python code and dump tree in text form")
+
 def unparse2jrun():
     run(lambda x, y, **kw: unparse2j(loadastpy(x, filename=y, **kw), **kw),
         prog="py2json", description="Convert Python code to JSON")
@@ -38,7 +46,10 @@ def run(parsefun, prog, description='What the program does'):
                     prog=prog,
                     description=description)
     parser.add_argument('filename', nargs='?')
-    parser.add_argument('-i', '--indent', type=int, default=0, const=1, nargs='?')
+    parser.add_argument('-e', '--show-empty', action='store_true')
+    parser.add_argument('-a', '--include-attributes', action='store_true')
+    parser.add_argument('-f', '--annotate-fields', action='store_true')
+    parser.add_argument('-i', '--indent', type=int, const=1, nargs='?')
     parser.add_argument('-o', '--output', type=str,
                         help='Write output to file')
     parser.add_argument('-g', '--debug', type=str, nargs='?', const='x',
@@ -59,12 +70,13 @@ def run(parsefun, prog, description='What the program does'):
     if args.output:
         out = open(args.output, 'w')
     debug = True if args.debug else False
-    indent = args.indent
+
+    pfkw = { k: v for k,v in vars(args).items() if k != 'filename' }
 
     if isinstance(parsefun, list):
         res = ''
         for i, pfun in enumerate(parsefun):
-            res = pfun(input, fname, indent=indent, debug=debug)
+            res = pfun(input, fname, **pfkw)
             if debug:
                 if isinstance(res, str):
                     with open(fname + '.' + f'{i}', 'w') as f:
@@ -72,4 +84,4 @@ def run(parsefun, prog, description='What the program does'):
             input = res
         print(res, file=out)
     else:
-        print(parsefun(input, fname, indent=indent, debug=debug), file=out)
+        print(parsefun(input, fname, **pfkw), file=out)

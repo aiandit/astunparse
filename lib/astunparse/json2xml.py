@@ -13,7 +13,7 @@ class JSON2XMLPrinter:
     input = {}
     output = None
     level = 0
-    indent = 0
+    indent = None
     indentstr = ' '
 
     def __init__(self, output=sys.stdout):
@@ -27,6 +27,8 @@ class JSON2XMLPrinter:
     def fill(self):
         if self.indent:
             self.output.write('\n' + self.indentstr * self.level * self.indent)
+        elif self.indent == 0:
+            self.output.write('\n')
 
     def write(self, str):
         self.output.write(str)
@@ -96,10 +98,13 @@ def runXSLT(docstr, xsltfname, params={}, base=None):
     result = transform(xmldoc, **params)
     return str(result)
 
-def xml2json(xmlstr, filename=None, indent=0, **kw):
-    return runXSLT(xmlstr, 'xsl/xml2json.xsl', params={"indentstr": "'%s'" % (' ' * indent)})
+def xml2json(xmlstr, filename=None, indent=None, **kw):
+    ilev = 1 if indent is None else int(indent)
+    indent = 0 if indent is None else 1
+    params = dict(indentstr="'%s'" % (' ' * ilev), indent='%d' % indent)
+    return runXSLT(xmlstr, 'xsl/xml2json.xsl', params=params)
 
-def json2xml(jstr, filename=None, indent=0, **kw):
+def json2xml(jstr, filename=None, indent=None, **kw):
     jdict = json.loads(jstr)
     output = StringIO()
     jp = JSON2XMLPrinter(output)

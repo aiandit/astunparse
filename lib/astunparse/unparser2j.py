@@ -38,12 +38,14 @@ class Unparser2J:
         self.output = output
 
     def __call__(self, tree):
-        self.spacer = ' ' if self.indent > 0 else ''
+        self.spacer = ' ' if self.indent else ''
         return self.dispatch(tree)
 
     def fill(self, text=''):
         if self.indent:
             self.write('\n' + self.indentstr * self.indent * self.level)
+        if self.indent == 0:
+            self.write('\n')
         if text:
             self.write(text)
 

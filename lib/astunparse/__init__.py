@@ -18,19 +18,19 @@ if sys.version_info >= (3, 6):
 __version__ = '1.6.5'
 
 
-def unparse(tree):
+def unparse(tree, **kw):
     v = cStringIO()
     Unparser(tree, file=v)
     return v.getvalue()
 
 
-def dump(tree):
+def dump(tree, **kw):
     v = cStringIO()
     Printer(file=v).visit(tree)
     return v.getvalue()
 
 
-def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok_in_fields=None, strip_fields=None):
+def unparse2j(tree, filename='internal.py', indent=None, debug=0, abbrev_none_is_ok_in_fields=None, strip_fields=None, **kw):
     jbuf = cStringIO()
     up1 = Unparser2J(jbuf)
     up1.indent = indent
@@ -45,8 +45,8 @@ def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok
     return jbuf.getvalue()
 
 
-def unparse2x(tree, indent=0, debug=0):
-    return json2xml(unparse2j(tree, abbrev_none_is_ok_in_fields=[], debug=debug), indent=indent)
+def unparse2x(tree, filename='internal.py', indent=0, debug=0, **kw):
+    return json2xml(unparse2j(tree, filename=filename, abbrev_none_is_ok_in_fields=[], debug=debug), indent=indent)
 
 
 def loadastj(jstr, filename='internal.json', **kw):
