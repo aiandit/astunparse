@@ -906,6 +906,60 @@ class Unparser:
             self.write(" as ")
             self.dispatch(t.optional_vars)
 
+    def _Match(self, t):
+        self.fill("match ")
+        self.dispatch(t.subject)
+        self.enter()
+        self.dispatch(t.cases)
+        self.leave()
+
+    def _match_case(self, t):
+        self.fill("case ")
+        self.dispatch(t.pattern)
+        if t.guard:
+            self.write(' if ')
+            self.dispatch(t.guard)
+        self.enter()
+        self.dispatch(t.body)
+        self.leave()
+
+    def _MatchSingleton(self, t):
+        if t.value is None:
+            self.write(t.value)
+        else:
+            self.dispatch(t.value)
+
+    def write_match_patterns(self, t, sep=', '):
+        comma = False
+        for p in t.patterns:
+            if comma: self.write(sep)
+            else: comma = True
+            self.dispatch(p)
+
+    def _MatchClass(self, t):
+        self.dispatch(t.cls)
+        self.write('(')
+        self.write_match_patterns(t)
+        self.write(')')
+
+    def _MatchSequence(self, t):
+        self.write('(')
+        self.write_match_patterns(t)
+        self.write(')')
+
+    def _MatchOr(self, t):
+        self.write_match_patterns(t, sep=' | ')
+
+    def _MatchValue(self, t):
+        self.dispatch(t.value)
+
+    def _MatchAs(self, t):
+        if t.name is None:
+            self.write('_')
+        else:
+            self.write(t.name)
+
+
 def roundtrip(filename, output=sys.stdout):
     if six.PY3:
         with open(filename, "rb") as pyfile:
