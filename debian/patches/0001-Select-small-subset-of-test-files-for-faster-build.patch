@@ -3,11 +3,11 @@ Date: Sat, 26 Oct 2024 16:49:56 +0200
 Subject: Select small subset of test files for faster build
 
 ---
- tests/common.py | 4 ++++
- 1 file changed, 4 insertions(+)
+ tests/common.py | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/tests/common.py b/tests/common.py
-index 0c8840d..5f797c2 100644
+index 0c8840d..0b1a50a 100644
 --- a/tests/common.py
 +++ b/tests/common.py
 @@ -12,6 +12,8 @@ if six.PY3:
@@ -19,11 +19,12 @@ index 0c8840d..5f797c2 100644
  def read_pyfile(filename):
      """Read and return the contents of a Python source file (as a
      string), taking into account the file encoding."""
-@@ -195,6 +197,8 @@ class AstunparseCommonTestCase:
+@@ -195,6 +197,9 @@ class AstunparseCommonTestCase:
                  if n.endswith('.py') and not n.startswith('bad'):
                      names.append(os.path.join(test_dir, n))
  
-+        names = random.sample(names, 10)
++        if len(names) > 10:
++            names = random.sample(names, 10)
 +
          for filename in names:
              print('Testing %s' % filename)
