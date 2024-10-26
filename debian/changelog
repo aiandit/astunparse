@@ -1,3 +1,11 @@
+astunparse-aiandit (1.7.0-1) unstable; urgency=medium
+
+  * Support for match compund stmt
+  * Support type alias and type params
+  * Add programs py2py and pydump
+
+ -- Johannes Willkomm <johannes.willkomm@googlemail.com>  Sat, 26 Oct 2024 16:42:21 +0200
+
 astunparse-aiandit (1.6.5-1) unstable; urgency=medium
 
   * Use " as quote for formatted string constants as in {"{"}, if the rest of the string also contains "
