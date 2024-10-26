@@ -522,7 +522,7 @@ class Unparser:
 
     def _fstring_Constant(self, t, write, strquote):
         assert isinstance(t.value, str)
-        value = t.value.replace("{", "{{").replace("}", "}}")
+        value = repr(t.value)[1:-1].replace("{", "{{").replace("}", "}}")
         write(value)
 
     def _fstring_FormattedValue(self, t, write, strquote):
