@@ -321,6 +321,10 @@ class Unparser:
             self.dispatch(deco)
         self.fill("class "+t.name)
         if six.PY3:
+            if t.type_params:
+                self.write("[")
+                self.dispatch(t.type_params)
+                self.write("]")
             self.write("(")
             comma = False
             for e in t.bases:
@@ -364,8 +368,13 @@ class Unparser:
         for deco in t.decorator_list:
             self.fill("@")
             self.dispatch(deco)
-        def_str = fill_suffix+" "+t.name + "("
+        def_str = fill_suffix+" "+t.name
         self.fill(def_str)
+        if t.type_params:
+            self.write("[")
+            self.dispatch(t.type_params)
+            self.write("]")
+        self.write("(")
         self.dispatch(t.args)
         self.write(")")
         if getattr(t, "returns", False):
@@ -958,6 +967,18 @@ class Unparser:
             self.write('_')
         else:
             self.write(t.name)
+
+    def _TypeAlias(self, t):
+        self.fill('type ')
+        self.dispatch(t.name)
+        self.write(' = ')
+        self.dispatch(t.value)
+
+    def _TypeVar(self, t):
+        self.write(t.name)
+        if t.bound:
+            self.write(': ')
+            self.dispatch(t.bound)
 
 
 def roundtrip(filename, output=sys.stdout):
