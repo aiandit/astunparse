@@ -321,6 +321,10 @@ class Unparser:
             self.dispatch(deco)
         self.fill("class "+t.name)
         if six.PY3:
+            if t.type_params:
+                self.write("[")
+                self.dispatch(t.type_params)
+                self.write("]")
             self.write("(")
             comma = False
             for e in t.bases:
@@ -364,8 +368,13 @@ class Unparser:
         for deco in t.decorator_list:
             self.fill("@")
             self.dispatch(deco)
-        def_str = fill_suffix+" "+t.name + "("
+        def_str = fill_suffix+" "+t.name
         self.fill(def_str)
+        if t.type_params:
+            self.write("[")
+            self.dispatch(t.type_params)
+            self.write("]")
+        self.write("(")
         self.dispatch(t.args)
         self.write(")")
         if getattr(t, "returns", False):
@@ -469,18 +478,22 @@ class Unparser:
             else:
                 assert False, "shouldn't get here"
 
+    quote_types1 = ["'", '"']
+    quote_types2 = ["'''", '"""']
     def _JoinedStr(self, t):
         # JoinedStr(expr* values)
         self.write("f")
         string = StringIO()
+        # fstring_JoinedStr will use '"' as quote for formatted str
+        # constants if the regular string constants also contain '"'
         self._fstring_JoinedStr(t, string.write)
         # Deviation from `unparse.py`: Try to find an unused quote.
         # This change is made to handle _very_ complex f-strings.
         v = string.getvalue()
         if '\n' in v or '\r' in v:
-            quote_types = ["'''", '"""']
+            quote_types = self.quote_types1
         else:
-            quote_types = ["'", '"', '"""', "'''"]
+            quote_types = self.quote_types1 + self.quote_types2
         for quote_type in quote_types:
             if quote_type not in v:
                 v = "{quote_type}{v}{quote_type}".format(quote_type=quote_type, v=v)
@@ -496,31 +509,41 @@ class Unparser:
         self._fstring_JoinedStr1(t, string.write)
         self.write(repr(string.getvalue()))
 
-    def _fstring_JoinedStr1(self, value, write):
-        cname = getattr(value, '_class', type(value).__name__)
+    def getClass(self, value):
+        return getattr(value, '_class', type(value).__name__)
+
+    def _fstring_JoinedStr1(self, value, write, strquote):
+        cname = self.getClass(value)
         meth = getattr(self, "_fstring_" + cname)
-        meth(value, write)
+        meth(value, write, strquote)
 
     def _fstring_JoinedStr(self, t, write):
+        conststr = [v.value for v in t.values if self.getClass(v) == "Constant"]
+        strquote = "'"
+        if "'" in ''.join(conststr):
+            strquote = '"'
         for value in t.values:
-            self._fstring_JoinedStr1(value, write)
+            self._fstring_JoinedStr1(value, write, strquote)
 
     def _fstring_Str(self, t, write):
         value = t.s.replace("{", "{{").replace("}", "}}")
         write(value)
 
-    def _fstring_Constant(self, t, write):
+    def _fstring_Constant(self, t, write, strquote):
         assert isinstance(t.value, str)
-        value = t.value.replace("{", "{{").replace("}", "}}")
+        value = repr(t.value)[1:-1].replace("{", "{{").replace("}", "}}")
         write(value)
 
-    def _fstring_FormattedValue(self, t, write):
+    def _fstring_FormattedValue(self, t, write, strquote):
         write("{")
         expr = StringIO()
         Unparser(t.value, expr)
         expr = expr.getvalue().rstrip("\n")
         if expr.startswith("{"):
             write(" ")  # Separate pair of opening brackets as "{ {"
+        elif any([expr.startswith(q) for q in self.quote_types1]):
+            if expr[0] != strquote:
+                expr = strquote + expr[1:-1] + strquote
         write(expr)
         if t.conversion != -1:
             conversion = chr(t.conversion)
@@ -891,6 +914,72 @@ class Unparser:
         if t.optional_vars:
             self.write(" as ")
             self.dispatch(t.optional_vars)
+
+    def _Match(self, t):
+        self.fill("match ")
+        self.dispatch(t.subject)
+        self.enter()
+        self.dispatch(t.cases)
+        self.leave()
+
+    def _match_case(self, t):
+        self.fill("case ")
+        self.dispatch(t.pattern)
+        if t.guard:
+            self.write(' if ')
+            self.dispatch(t.guard)
+        self.enter()
+        self.dispatch(t.body)
+        self.leave()
+
+    def _MatchSingleton(self, t):
+        if t.value is None:
+            self.write(t.value)
+        else:
+            self.dispatch(t.value)
+
+    def write_match_patterns(self, t, sep=', '):
+        comma = False
+        for p in t.patterns:
+            if comma: self.write(sep)
+            else: comma = True
+            self.dispatch(p)
+
+    def _MatchClass(self, t):
+        self.dispatch(t.cls)
+        self.write('(')
+        self.write_match_patterns(t)
+        self.write(')')
+
+    def _MatchSequence(self, t):
+        self.write('(')
+        self.write_match_patterns(t)
+        self.write(')')
+
+    def _MatchOr(self, t):
+        self.write_match_patterns(t, sep=' | ')
+
+    def _MatchValue(self, t):
+        self.dispatch(t.value)
+
+    def _MatchAs(self, t):
+        if t.name is None:
+            self.write('_')
+        else:
+            self.write(t.name)
+
+    def _TypeAlias(self, t):
+        self.fill('type ')
+        self.dispatch(t.name)
+        self.write(' = ')
+        self.dispatch(t.value)
+
+    def _TypeVar(self, t):
+        self.write(t.name)
+        if t.bound:
+            self.write(': ')
+            self.dispatch(t.bound)
+
 
 def roundtrip(filename, output=sys.stdout):
     if six.PY3:

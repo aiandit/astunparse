@@ -38,12 +38,14 @@ class Unparser2J:
         self.output = output
 
     def __call__(self, tree):
-        self.spacer = ' ' if self.indent > 0 else ''
+        self.spacer = ' ' if self.indent else ''
         return self.dispatch(tree)
 
     def fill(self, text=''):
         if self.indent:
             self.write('\n' + self.indentstr * self.indent * self.level)
+        if self.indent == 0:
+            self.write('\n')
         if text:
             self.write(text)
 
@@ -58,12 +60,12 @@ class Unparser2J:
 
     def dispatch(self, tree, name=None):
         if isinstance(tree, list):
-            self.fill(f'[')
+            self.fill('[')
             for (i,t) in enumerate(tree):
                 if i > 0:
                     self.write(f',{self.spacer}')
                 self.dispatch(t)
-            self.write(f']')
+            self.write(']')
         elif isinstance(tree, ASTNode):
             cname = tree._class
             meth = getattr(self, "_"+cname, None)
@@ -76,11 +78,11 @@ class Unparser2J:
                 for k in fieldnames:
                     if k == '_class': continue
                     elem = getattr(tree, k)
-                    self.write(f',')
+                    self.write(',')
                     self.fill(f'"{k}":{self.spacer}')
                     self.dispatch(getattr(tree, k), k)
                 self.leave()
-            self.write(f'{"}"}')
+            self.write('}')
         elif isinstance(tree, bool):
             self.write(f'{"{"}"_class":{self.spacer}"bool",')
             self.fill(f' "value": "{repr(tree)}"{"}"}')
@@ -101,7 +103,7 @@ class Unparser2J:
             self.write(',')
             self.fill(f' "imag":{self.spacer}')
             self.dispatch(tree.imag)
-            self.write(f'{"}"}')
+            self.write('}')
 #        elif isinstance(tree, ellipsis):
 #            self.write(f'"..."')
         elif isinstance(tree, str):

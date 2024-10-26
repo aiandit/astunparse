@@ -1,5 +1,8 @@
 .PHONY: clean-pyc clean-build docs clean
 
+all: dist
+
+
 help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
@@ -37,11 +40,11 @@ docs:
 	tox -e docs
 
 dist: clean
-	python setup.py sdist
-	python setup.py bdist_wheel
-	python setup.py bdist_egg
-	ls -l dist
+	python -m build .
 
 PIP ?= pip
-install: dist
+install:
+	$(PIP) install .
+
+install-dist:
 	$(PIP) install -I $(shell ls -1rt dist/*.whl | tail -n 1)

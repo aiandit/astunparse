@@ -7,6 +7,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
   <xsl:output method="text"/>
+  <xsl:param name="indent" select="0"/>
   <xsl:param name="indentstr" select="''"/>
   <xsl:param name="spacer" select="substring($indentstr, 1, 1)"/>
 
@@ -17,7 +18,7 @@
   </xsl:template>
 
   <xsl:template match="*|@*" mode="indent">
-    <xsl:if test="$indentstr and count(ancestor::*) > 0">
+    <xsl:if test="$indent and count(ancestor::*) > 0">
       <xsl:text>&#xa;</xsl:text>
       <xsl:apply-templates select="." mode="indentstr"/>
     </xsl:if>

@@ -8,29 +8,29 @@ import sys
 from .unparser import Unparser
 from .printer import Printer
 from .astnode import ASTBuilderAttr, ASTBuilderDict, ASTNode
-from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict, normalize
+from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict, normalize, ast_dump
 
 if sys.version_info >= (3, 6):
     from .unparser2j import Unparser2J
     from .json2xml import xml2json, json2xml
 
 
-__version__ = '1.6.4'
+__version__ = '1.7.0'
 
 
-def unparse(tree):
+def unparse(tree, **kw):
     v = cStringIO()
     Unparser(tree, file=v)
     return v.getvalue()
 
 
-def dump(tree):
+def dump(tree, **kw):
     v = cStringIO()
     Printer(file=v).visit(tree)
     return v.getvalue()
 
 
-def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok_in_fields=None, strip_fields=None):
+def unparse2j(tree, filename='internal.py', indent=None, debug=0, abbrev_none_is_ok_in_fields=None, strip_fields=None, **kw):
     jbuf = cStringIO()
     up1 = Unparser2J(jbuf)
     up1.indent = indent
@@ -45,8 +45,8 @@ def unparse2j(tree, filename='internal.py', indent=0, debug=0, abbrev_none_is_ok
     return jbuf.getvalue()
 
 
-def unparse2x(tree, indent=0, debug=0):
-    return json2xml(unparse2j(tree, abbrev_none_is_ok_in_fields=[], debug=debug), indent=indent)
+def unparse2x(tree, filename='internal.py', indent=0, debug=0, **kw):
+    return json2xml(unparse2j(tree, filename=filename, abbrev_none_is_ok_in_fields=[], debug=debug), indent=indent)
 
 
 def loadastj(jstr, filename='internal.json', **kw):

@@ -13,6 +13,23 @@ AST Unparser
 
 An AST unparser for Python.
 
+This is a forked version of Simon Percivall's original package found
+at https://github.com/simonpercivall/astunparse. Compared to the
+original, this fork adds the following:
+
+   * Support for the match compund stmt
+   * Support for type alias and type parameters
+   * Added JSON and XML dumps of AST, with full round trip compatibility
+   * Added cmdline programs (entry points)
+     * py2py
+     * pydump
+     * py2xml and xml2py
+     * py2json and json2py
+   * Fix for issues regarding testing #67 and #57 of the original
+     * The full set of library files can be unparsed as of Python 3.12
+   * Fix for issue #62 of the original
+   * The dump funciton is retained, but no attempt is made to compare against ast.dump, test_dump.py is removed
+
 This is a factored out version of ``unparse`` found in the Python
 source distribution; under Demo/parser in Python 2 and under Tools/parser
 in Python 3.

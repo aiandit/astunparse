@@ -143,6 +143,18 @@ complex_f_string = '''\
 f\'\'\'-{f"""*{f"+{f'.{x}.'}+"}*"""}-\'\'\'
 '''
 
+complex_f_string2 = '''\
+f\'{"{"}"test"\'
+'''
+
+complex_f_string3 = '''\
+f\'{"{"}"_class":{pre}"{val}"\'
+'''
+
+complex_f_string4 = '''\
+f\'test {val1} \\n{val2}\'
+'''
+
 async_function_def = """\
 async def f():
     suite1
@@ -175,13 +187,10 @@ class AstunparseCommonTestCase:
     def check_roundtrip(self, code1, filename="internal", mode="exec"):
         raise NotImplementedError()
 
-    test_directories = [
-        os.path.join(getattr(sys, 'real_prefix', sys.prefix),
-                     'lib', 'python%s.%s' % sys.version_info[:2])]
-
-    def test_files(self):
+    def check_files(self, dirs):
         names = []
-        for test_dir in self.test_directories:
+        for test_dir in dirs:
+            print('Test dir %s' % test_dir)
             for n in os.listdir(test_dir):
                 if n.endswith('.py') and not n.startswith('bad'):
                     names.append(os.path.join(test_dir, n))
@@ -190,6 +199,21 @@ class AstunparseCommonTestCase:
             print('Testing %s' % filename)
             source = read_pyfile(filename)
             self.check_roundtrip(source)
+
+    sys_directories = [
+        name for name in sys.path if os.path.exists(name)
+    ]
+
+    example_directories = [
+        # search 'tests/examples'
+        os.path.join(os.path.dirname(__file__), 'examples')
+    ]
+
+    def test_files(self):
+        self.check_files(self.sys_directories)
+
+    def test_examples(self):
+        self.check_files(self.example_directories)
 
     def test_parser_modes(self):
         for mode in ['exec', 'single', 'eval']:
@@ -337,6 +361,18 @@ class AstunparseCommonTestCase:
     @unittest.skipUnless(sys.version_info[:2] >= (3, 6), "Only for Python 3.6 or greater")
     def test_complex_f_string(self):
         self.check_roundtrip(complex_f_string)
+
+    @unittest.skipUnless(sys.version_info[:2] >= (3, 6), "Only for Python 3.6 or greater")
+    def test_complex_f_string2(self):
+        self.check_roundtrip(complex_f_string2)
+
+    @unittest.skipUnless(sys.version_info[:2] >= (3, 6), "Only for Python 3.6 or greater")
+    def test_complex_f_string3(self):
+        self.check_roundtrip(complex_f_string3)
+
+    @unittest.skipUnless(sys.version_info[:2] >= (3, 6), "Only for Python 3.6 or greater")
+    def test_complex_f_string4(self):
+        self.check_roundtrip(complex_f_string4)
 
     @unittest.skipUnless(six.PY3, "Only for Python 3")
     def test_annotations(self):
