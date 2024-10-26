@@ -8,7 +8,7 @@ import sys
 from .unparser import Unparser
 from .printer import Printer
 from .astnode import ASTBuilderAttr, ASTBuilderDict, ASTNode
-from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict, normalize
+from .astnode import loadastpy, loadastpy_raw, loadastobj, loadastdict, normalize, ast_dump
 
 if sys.version_info >= (3, 6):
     from .unparser2j import Unparser2J

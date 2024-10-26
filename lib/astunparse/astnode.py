@@ -182,3 +182,10 @@ def loadastpy(source, fname="", mode="exec", **kw):
 def normalize(tree, **kw):
     an = ASTNormalizer()
     return an(tree)
+
+def ast_dump(rawtree, **kw):
+    use = ['indent', 'include_attributes', 'annotate_fields']
+    # starting with python 3.13
+    # use += ['show_empty']
+    dkw = { k: v for k,v in kw.items() if k in use }
+    return ast.dump(rawtree, **dkw)
