@@ -15,7 +15,7 @@ if sys.version_info >= (3, 6):
     from .json2xml import xml2json, json2xml
 
 
-__version__ = '1.6.4'
+__version__ = '1.6.5'
 
 
 def unparse(tree):
