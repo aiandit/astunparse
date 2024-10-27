@@ -44,6 +44,7 @@ setup(
     install_requires=read_reqs('requirements.txt'),
     entry_points={
         'console_scripts': [
+            'astunparse=astunparse.__main__:run',
             'py2py=astunparse.cmdline:unparse2pyrun',
             'pydump=astunparse.cmdline:pydumprun',
             'py2json=astunparse.cmdline:unparse2jrun',

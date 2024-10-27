@@ -43,6 +43,8 @@ def main(args):
     for target in arguments.target:
         roundtrip_recursive(target, dump_tree=arguments.dump)
 
+def run():
+    main(sys.argv[1:])
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    run()
