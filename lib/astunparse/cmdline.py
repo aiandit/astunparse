@@ -46,7 +46,7 @@ def loadastxrun():
     run(prog="xml2py")
 
 def json2xmlrun():
-    run(prog="xml2json")
+    run(prog="json2xml")
 
 def xml2jsonrun():
     run(prog="xml2json")
