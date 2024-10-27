@@ -25,6 +25,11 @@ original, this fork adds the following:
      * pydump
      * py2xml and xml2py
      * py2json and json2py
+     * astunparse with subcommands as above
+     * former functionality python -m astunparse is retained
+   * Construct own AST composed of generic own ASTNode only
+     * No need to know all the internal AST node types
+     * AST node type is in _class attribute ASTNode
    * Fix for issues regarding testing #67 and #57 of the original
      * The full set of library files can be unparsed as of Python 3.12
    * Fix for issue #62 of the original

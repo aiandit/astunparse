@@ -26,13 +26,17 @@ def read_version():
 
 
 setup(
-    name='astunparse',
+    name='astunparse-aiandit',
     version=read_version(),
-    description='An AST unparser for Python',
+    description='An AST unparser for Python (AI&IT fork)',
     long_description=readme + '\n\n' + history,
     maintainer='Simon Percivall',
-    maintainer_email='percivall@gmail.com',
-    url='https://github.com/simonpercivall/astunparse',
+    maintainer_email='jwillkomm@ai-and-it.de',
+    url='https://github.com/aiandit/astunparse',
+    project_urls={
+        'AI&IT Home': 'https://ai-and-it.de',
+        'Original Project': 'https://github.com/simonpercivall/astunparse',
+    },
     packages=find_packages('lib'),
     package_dir={'': 'lib'},
     include_package_data=True,
@@ -40,6 +44,9 @@ setup(
     install_requires=read_reqs('requirements.txt'),
     entry_points={
         'console_scripts': [
+            # master entry point, includes the following as subcommands
+            'astunparse=astunparse.__main__:run',
+            # the following shortcuts are optional, can also be called via astunparse
             'py2py=astunparse.cmdline:unparse2pyrun',
             'pydump=astunparse.cmdline:pydumprun',
             'py2json=astunparse.cmdline:unparse2jrun',
@@ -67,6 +74,9 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Code Generators',
     ],
     test_suite='tests',
