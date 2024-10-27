@@ -44,7 +44,9 @@ setup(
     install_requires=read_reqs('requirements.txt'),
     entry_points={
         'console_scripts': [
+            # master entry point, includes the following as subcommands
             'astunparse=astunparse.__main__:run',
+            # the following shortcuts are optional, can also be called via astunparse
             'py2py=astunparse.cmdline:unparse2pyrun',
             'pydump=astunparse.cmdline:pydumprun',
             'py2json=astunparse.cmdline:unparse2jrun',
