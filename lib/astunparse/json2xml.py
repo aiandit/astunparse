@@ -21,7 +21,7 @@ class JSON2XMLPrinter:
 
     def __call__(self, dict):
         self.input = dict
-        self.write('<?xml version="1.0"?>')
+        #self.write('<?xml version="1.0"?>')
         self.dispatch(dict)
 
     def fill(self):
