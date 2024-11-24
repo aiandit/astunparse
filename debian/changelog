@@ -1,3 +1,15 @@
+astunparse-aiandit (1.7.2-1) unstable; urgency=medium
+
+  [ Johannes Willkomm ]
+  * Select small subset of test files for faster build
+  * Update pkg info, name changed to astunparse-aiandit
+  * Add console script astunparse
+  * Provide cmdline tools either directly or as astunparse subcmd
+  * Fix json2xml CLI tool
+  * Omit XML decl
+
+ -- Johannes Willkomm <johannes.willkomm@googlemail.com>  Sun, 24 Nov 2024 11:43:23 +0100
+
 astunparse-aiandit (1.7.0-1) unstable; urgency=medium
 
   * Support for match compund stmt
