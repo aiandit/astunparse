@@ -212,6 +212,7 @@ class AstunparseCommonTestCase:
     def test_files(self):
         self.check_files(self.sys_directories)
 
+    @unittest.skipUnless(sys.version_info[:2] >= (3, 10), "Only for Python 3.10 or greater")
     def test_examples(self):
         self.check_files(self.example_directories)
 
